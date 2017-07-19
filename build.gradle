@@ -1,0 +1,48 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.1.3-2'
+        jUnitPlatformVersion = '1.0.0-M4'
+        jUnitVersion = '5.0.0-M4'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath("org.junit.platform:junit-platform-gradle-plugin:${jUnitPlatformVersion}")
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile('org.slf4j:slf4j-api:1.7.25')
+    compile('org.springframework:spring-web:4.3.9.RELEASE')
+    compile('com.fasterxml.jackson.core:jackson-databind:2.6.7.1')
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
+    compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+
+    testCompile('ch.qos.logback:logback-classic:1.2.3')
+    testCompile('org.assertj:assertj-core:3.6.2')
+    testCompile("org.junit.jupiter:junit-jupiter-api:${jUnitVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}")
+    testCompile('com.github.tomakehurst:wiremock-standalone:2.6.0')
+
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
