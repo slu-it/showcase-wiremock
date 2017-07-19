@@ -10,14 +10,18 @@ import org.junit.jupiter.api.extension.ExtensionContext.Namespace
 /**
  * This extension was implemented because WireMock, as of 2017-07-19, has no official JUnit 5 support.
  */
-class WireMockExtension : BeforeEachCallback, AfterTestExecutionCallback, AfterEachCallback, ParameterResolver {
+class WireMockExtension : BeforeAllCallback, BeforeEachCallback, AfterTestExecutionCallback, AfterEachCallback, ParameterResolver {
 
     private val namespace = Namespace.create("wiremock")
 
-    override fun beforeEach(context: TestExtensionContext) {
-        val server = WireMockServer(wireMockConfig().dynamicPort()).apply { start() }
-        WireMock.configureFor("localhost", server.port())
+    override fun beforeAll(context: ContainerExtensionContext) {
+        val server = WireMockServer(wireMockConfig().dynamicPort())
         setServer(context, server)
+    }
+
+    override fun beforeEach(context: TestExtensionContext) {
+        val server = getServer(context).apply { start() }
+        WireMock.configureFor("localhost", server.port())
     }
 
     override fun resolve(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
@@ -37,6 +41,7 @@ class WireMockExtension : BeforeEachCallback, AfterTestExecutionCallback, AfterE
     }
 
     override fun afterEach(context: TestExtensionContext) {
+        WireMock.reset()
         getServer(context).stop()
     }
 
